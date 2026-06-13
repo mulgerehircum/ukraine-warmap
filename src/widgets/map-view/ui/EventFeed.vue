@@ -145,8 +145,20 @@ const totalCount = computed(() =>
 
 function toggleExpand(type: string) {
   expandedTypes.value = { ...expandedTypes.value, [type]: !expandedTypes.value[type] }
+  // fetch OG for newly visible rows; cache hits are instant
+  fetchVisibleOg()
 }
 
+function visibleUrls(): string[] {
+  const seen = new Set<string>()
+  return grouped.value
+    .flatMap(g => g.visible)
+    .map(ev => ev.urls[0])
+    .filter((u): u is string => {
+      if (!u || seen.has(u)) return false
+      seen.add(u); return true
+    })
+}
 
 watch(() => props.eventsKey, () => {
   if (isLocationMode.value) return
@@ -174,25 +186,20 @@ watch(() => props.eventsKey, () => {
     allEvents.value = loaded?.entries ?? []
   }, 350)
 
-  // 800ms: OG fetches — only fires after user settles
+  // 800ms: OG fetches for visible rows only — fires after user settles
   if (ogTimer !== null) clearTimeout(ogTimer)
   ogTimer = setTimeout(() => {
     ogTimer = null
-    const loaded = getLoadedEvents()
-    if (!loaded?.entries.length) return
-    loading.value = true
-    fetchAllOg(loaded.entries, ++fetchGen).finally(() => { loading.value = false })
+    fetchVisibleOg()
   }, 800)
 }, { immediate: true })
 
-async function fetchAllOg(evs: ProcessedEvent[], gen: number) {
-  const seen = new Set<string>()
-  const urls = evs.map(ev => ev.urls[0]).filter((u): u is string => {
-    if (!u || seen.has(u)) return false
-    seen.add(u); return true
-  })
+async function fetchVisibleOg() {
+  const urls = visibleUrls()
   if (!urls.length) return
-  const CONCURRENCY = 5
+  const gen = ++fetchGen
+  loading.value = true
+  const CONCURRENCY = 3
   let idx = 0
   async function worker() {
     while (idx < urls.length && gen === fetchGen) {
@@ -203,6 +210,7 @@ async function fetchAllOg(evs: ProcessedEvent[], gen: number) {
     }
   }
   await Promise.all(Array.from({ length: Math.min(CONCURRENCY, urls.length) }, worker))
+  if (gen === fetchGen) loading.value = false
 }
 </script>
 
