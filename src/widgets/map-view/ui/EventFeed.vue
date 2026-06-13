@@ -645,19 +645,14 @@ async function fetchAllOg(evs: ProcessedEvent[], gen: number) {
   line-height: 1.3;
 }
 .feed-card-desc {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.2s ease;
+  display: block;
 }
 .feed-card-desc-inner {
-  overflow: hidden;
+  display: block;
   font-family: var(--aero-font);
   font-size: 11px;
   color: rgba(255,255,255,0.55);
   line-height: 1.45;
-}
-.feed-card:hover .feed-card-desc {
-  grid-template-rows: 1fr;
 }
 
 /* Expand */
