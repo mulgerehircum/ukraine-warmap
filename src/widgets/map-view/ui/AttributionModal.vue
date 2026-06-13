@@ -36,6 +36,10 @@ defineEmits<{ close: [] }>()
               <a href="https://github.com/zhukovyuri/VIINA" target="_blank" rel="noopener">VIINA</a>
               (Violent Incident Information from News Articles), Yuri Zhukov et al.
             </li>
+            <li>
+              <strong>Air alerts</strong> —
+              <a href="https://alerts.in.ua" target="_blank" rel="noopener">alerts.in.ua</a>
+            </li>
           </ul>
         </div>
       </div>
