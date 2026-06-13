@@ -2,7 +2,7 @@
 
 An interactive war-event map of Ukraine built with Vue 3, TypeScript, MapLibre GL JS v5, and Three.js.  
 Data source: [VIINA dataset](https://github.com/zhukovsd/russia-ukraine-conflict-map) (daily CSV → static JSON).  
-Deployed on Vercel. Data refreshed daily via GitHub Actions.
+Deployed on Vercel. Data refreshed weekly via GitHub Actions.
 
 ---
 
@@ -66,9 +66,9 @@ Deployed on Vercel. Data refreshed daily via GitHub Actions.
 | Framework | Vue 3 — Composition API, `<script setup lang="ts">` |
 | Map | MapLibre GL JS v5 — satellite tiles, terrain, occupation overlay |
 | 3D | Three.js r184 — custom WebGL layer sharing MapLibre's context |
-| Build | Vite + vue-tsc |
+| Build | Vite + vue-tsc + ESLint |
 | Hosting | Vercel + `api/og.js` + `api/alerts.js` serverless functions |
-| Data refresh | GitHub Actions (`.github/workflows/refresh.yml`, daily 05:00 UTC) |
+| Data refresh | GitHub Actions (`.github/workflows/update-data.yml`, weekly Mon 06:00 UTC) |
 
 ---
 
@@ -221,15 +221,17 @@ Vercel serverless proxy that forwards the compact IoT endpoint and sets
 
 ### High priority
 - **Frontline animation** — occupation polygons (`viina-tess.geojson`) currently render as a static snapshot; wire `updateArrowsDate`-style date filtering so the frontline moves as the timeline scrubs
-- **Narrative / story mode** — guided auto-play that sequences through milestones, moves the map camera, spikes the timeline, and shows contextual EventFeed; turns the map into a self-contained explainer
 
 ### Medium priority
 - **Derived operation arrows** — diff consecutive occupation snapshots to auto-generate movement vectors; complement the authored arrows with continuous frontline shift indicators
 - **Arrow refinement** — improve authored arrow coordinates with higher-precision paths; add Donbas 2022 encirclements, Robotyne, Vuhledar
-- **Live event ingestion** — real-time event feed beyond air alerts; VIINA updates daily but a near-real-time layer for confirmed events would make the "Today" end of the timeline live
-- **Location search** — type a settlement name to jump the map and pre-filter the EventFeed
+- **Live event ingestion** — real-time event feed beyond air alerts; VIINA updates weekly but a near-real-time layer for confirmed events would make the "Today" end of the timeline live
 
 ### Low priority / out of scope for now
-- Mobile adaptation
 - Exportable clip / embed mode for journalists
 - Comparison mode (two date ranges side by side)
+
+### Done
+- Story mode — `StoryMode.vue`, guided milestone auto-play with camera moves and EventFeed sync
+- Location drill-down — click any settlement to filter EventFeed to all events at that location
+- Mobile layout — two-row timeline grid, safe-area insets, iOS viewport handling
