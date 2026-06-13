@@ -25,22 +25,6 @@ function extractMeta(html, property) {
   return null
 }
 
-// Debug mock: eastern/southern oblasts under alert so the UI is testable
-// without a real token.  Positions map to REGION_TO_FEATURE in alerts.ts:
-//  2=Dnipro  3=Donetsk  6=Zaporizhzhia  10=Luhansk  12=Mykolaiv  13=Odesa
-//  16=Sumy  18=Kharkiv  19=Kherson
-const DEBUG_STATES = 'NNAANNANNN' + 'ANAANNANAA' + 'NNNNNNN'
-
-const alertsPlugin = {
-  name: 'alerts-mock',
-  configureServer(server) {
-    server.middlewares.use('/api/alerts', (_req, res) => {
-      res.writeHead(200, { 'Content-Type': 'application/json', 'X-Alerts-Debug': '1' })
-      res.end(JSON.stringify({ states: DEBUG_STATES, debug: true }))
-    })
-  },
-}
-
 const ogPlugin = {
   name: 'og-proxy',
   configureServer(server) {
@@ -98,5 +82,5 @@ const ogPlugin = {
 }
 
 export default defineConfig({
-  plugins: [vue(), alertsPlugin, ogPlugin],
+  plugins: [vue(), ogPlugin],
 })

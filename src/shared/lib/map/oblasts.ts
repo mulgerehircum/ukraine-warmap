@@ -90,7 +90,7 @@ export function addOblastLayer(map: MlMap): void {
   })
 
   map.addLayer({
-    id: 'oblast-hittest',
+    id: 'oblast-fill',
     type: 'fill',
     source: 'oblasts',
     paint: { 'fill-opacity': 0.001 },

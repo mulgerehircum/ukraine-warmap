@@ -22,7 +22,7 @@ import CompassSelector from './CompassSelector.vue'
 import AttributionModal from './AttributionModal.vue'
 import WarDayCounter from './WarDayCounter.vue'
 import AlertBadge from './AlertBadge.vue'
-import AlertShield from './AlertShield.vue'
+import AlertDots from './AlertDots.vue'
 import TimelineBar from './TimelineBar.vue'
 import TypeChart from './TypeChart.vue'
 import MilestoneCard from './MilestoneCard.vue'
@@ -103,7 +103,7 @@ function storyFlyTo(idx: number) {
 async function storyArriveAt(idx: number) {
   storyPhase.value = 'dwelling'
   const date = milestoneToDate(idx)
-  await onDebugChange(date)
+  await onDateChange(date)
   storyFlyTo(idx)
   videoHidden.value = false
   if (!storyPaused.value) {
@@ -207,7 +207,6 @@ function storyPrev() {
 const EVENT_LAYERS = ['events-cluster', 'events-circles', 'events-oblast-counts']
 const attributionOpen = ref(false)
 const alertCount = ref(0)
-const alertDebug = ref(false)
 const alertedIds = ref(new Set<number>())
 const mapInstance = ref<Map | null>(null)
 const threeDEnabled = ref(true)
@@ -219,7 +218,7 @@ const isLive = computed(() => {
 })
 
 const EMPTY_ALERT_SET = new Set<number>()
-const shieldAlertedIds = computed(() => isLive.value ? alertedIds.value : EMPTY_ALERT_SET)
+const alertDotIds = computed(() => isLive.value ? alertedIds.value : EMPTY_ALERT_SET)
 
 watch(isLive, (live) => {
   if (live) reapplyAlerts()
@@ -252,7 +251,7 @@ onMounted(() => {
     setEventsDate(m, di).then(() => { eventsKey.value++ })
     updateArrowsDate(di)
     loadAndApplyChoropleth()
-    initAlerts(m, (n, dbg, ids) => { alertCount.value = n; alertDebug.value = dbg; alertedIds.value = ids })
+    initAlerts(m, (n, ids) => { alertCount.value = n; alertedIds.value = ids })
     initCitySpikes()
     setCitySpikesVisible(false)
     Promise.all([initLandmarks(m!), loadChoroplethTimeline()]).then(() => {
@@ -302,7 +301,7 @@ function resetNorth() {
   map?.easeTo({ bearing: 0, duration: 300 })
 }
 
-async function onDebugChange(date: Date) {
+async function onDateChange(date: Date) {
   if (!map) return
   activeDate.value = date
   const di = dateToInt(date)
@@ -363,8 +362,8 @@ function toggleThreeD() {
   <div class="map-wrapper">
     <div ref="mapContainer" class="map-view" />
     <WarDayCounter :date="activeDate" />
-    <AlertBadge :count="isLive ? alertCount : 0" :debug="alertDebug" />
-    <AlertShield :map="mapInstance" :alerted-ids="shieldAlertedIds" />
+    <AlertBadge :count="isLive ? alertCount : 0" />
+    <AlertDots :map="mapInstance" :alerted-ids="alertDotIds" />
     <CompassSelector :mode="mode" :bearing="bearing" @select="selectMode" @reset-north="resetNorth" />
     <TypeFilter
       :visible="mode !== 'heatmap' && !storyActive"
@@ -407,8 +406,8 @@ function toggleThreeD() {
       @exit="storyStop"
     />
 
-    <TypeChart v-if="mode === 'heatmap'" :active-date="activeDate" @change="onDebugChange" @playing="onPlayingChange" @filter-type="onTypeChartFilter" />
-    <TimelineBar v-else :active-date="activeDate" :auto-play="false" :story-active="storyActive" :story-paused="storyPaused" @change="onDebugChange" @playing="onPlayingChange" @story-start="storyStart" @story-toggle-pause="storyTogglePause" />
+    <TypeChart v-if="mode === 'heatmap'" :active-date="activeDate" @change="onDateChange" @playing="onPlayingChange" @filter-type="onTypeChartFilter" />
+    <TimelineBar v-else :active-date="activeDate" :auto-play="false" :story-active="storyActive" :story-paused="storyPaused" @change="onDateChange" @playing="onPlayingChange" @story-start="storyStart" @story-toggle-pause="storyTogglePause" />
     <AttributionModal :open="attributionOpen" @close="attributionOpen = false" />
   </div>
 </template>
