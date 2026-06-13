@@ -16,7 +16,6 @@ function popScale(pop: number): number {
   return 0.4 + 0.6 * Math.sqrt(pop / MAX_POP)
 }
 
-// ── Flag ShaderMaterial ───────────────────────────────────────────────────────
 // Samples the original GLTF texture and blends in a world-space waving
 // Ukrainian flag overlay.  Using a full ShaderMaterial avoids onBeforeCompile
 // fragility while keeping the photogrammetry texture intact.
@@ -92,7 +91,6 @@ function makeFlagMat(
   return mat
 }
 
-// ── Cell-shading outline ──────────────────────────────────────────────────────
 // Back-face expansion in clip space: push each vertex outward along its
 // screen-space normal, render only back faces in a solid dark colour.
 // normalMatrix (mat3) is provided automatically by Three.js ShaderMaterial.
@@ -126,7 +124,6 @@ function makeOutlineMesh(src: Mesh): Mesh {
   return m
 }
 
-// ── GLTF loader ──────────────────────────────────────────────────────────────
 
 const loader = new GLTFLoader()
 
@@ -177,13 +174,11 @@ function loadGLTF(slug: string, targetHeight: number): Promise<Loaded> {
   })
 }
 
-// ── city registry ────────────────────────────────────────────────────────────
 
 const CITY_DEFS = [
   { name: 'Kyiv', lng: 30.5238, lat: 50.4546, pop: 2_952_301, oblastIdx: 12, model: 'kyiv' },
 ] as const
 
-// ── runtime state ────────────────────────────────────────────────────────────
 
 const landmarksGroup = new Group()
 scene.add(landmarksGroup)
@@ -207,7 +202,6 @@ if (import.meta.hot) {
   })
 }
 
-// ── public API ───────────────────────────────────────────────────────────────
 
 export async function initLandmarks(map: MlMap): Promise<void> {
   for (const city of CITY_DEFS) {

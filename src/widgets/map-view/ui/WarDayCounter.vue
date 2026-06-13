@@ -29,8 +29,10 @@ const dateLabel = computed(() =>
 .war-counter {
   position: absolute;
   top: 14px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: fit-content;
   z-index: 10;
   display: flex;
   align-items: baseline;

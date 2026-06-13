@@ -70,7 +70,6 @@ watch(activeMilestoneIdx, (idx) => {
   setMilestoneHighlight(idx !== null ? MILESTONES[idx].oblasts : [])
 })
 
-// ── Story mode ────────────────────────────────────────────────────────────
 const storyActive  = ref(false)
 const storyIndex   = ref(0)
 const storyPaused  = ref(false)
@@ -202,7 +201,6 @@ function storyPrev() {
   storyGoto(storyIndex.value - 1)
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 
 const EVENT_LAYERS = ['events-cluster', 'events-circles', 'events-oblast-counts']
 const attributionOpen = ref(false)
@@ -460,8 +458,10 @@ function toggleThreeD() {
 .milestone-stack {
   position: absolute;
   top: 88px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: fit-content;
   z-index: 20;
   display: flex;
   flex-direction: column;

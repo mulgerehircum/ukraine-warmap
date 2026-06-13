@@ -15,7 +15,6 @@ const RET = '#7890b0'   // Retreat/withdrawal
 const CNT = '#4dd7fa'   // Ukrainian counteroffensive / incursion
 
 export const OPERATION_ARROWS: OperationArrow[] = [
-  // ── Feb–Mar 2022: Initial invasion ────────────────────────────────────
   {
     id: 'kyiv-nw', label: 'Advance on Kyiv (NW)', type: 'attack',
     dateStart: 20220224, dateEnd: 20220329,
@@ -59,7 +58,6 @@ export const OPERATION_ARROWS: OperationArrow[] = [
     color: ATK,
   },
 
-  // ── Mar–Apr 2022: Kyiv withdrawal ─────────────────────────────────────
   {
     id: 'kyiv-retreat', label: 'Withdrawal from Kyiv', type: 'retreat',
     dateStart: 20220330, dateEnd: 20220410,
@@ -67,7 +65,6 @@ export const OPERATION_ARROWS: OperationArrow[] = [
     color: RET,
   },
 
-  // ── Apr–Sep 2022: Donbas offensive ────────────────────────────────────
   {
     id: 'izium-donbas', label: 'Izium–Donbas axis', type: 'attack',
     dateStart: 20220401, dateEnd: 20220901,
@@ -87,7 +84,6 @@ export const OPERATION_ARROWS: OperationArrow[] = [
     color: ATK,
   },
 
-  // ── Sep 2022: Kharkiv counteroffensive ────────────────────────────────
   {
     id: 'kharkiv-counter', label: 'Kharkiv counteroffensive', type: 'counteroffensive',
     dateStart: 20220906, dateEnd: 20221001,
@@ -95,7 +91,6 @@ export const OPERATION_ARROWS: OperationArrow[] = [
     color: CNT,
   },
 
-  // ── Aug–Nov 2022: Kherson counteroffensive ────────────────────────────
   {
     id: 'kherson-counter', label: 'Kherson counteroffensive', type: 'counteroffensive',
     dateStart: 20220829, dateEnd: 20221111,
@@ -103,7 +98,6 @@ export const OPERATION_ARROWS: OperationArrow[] = [
     color: CNT,
   },
 
-  // ── Jun–Nov 2023: Zaporizhzhia counteroffensive ───────────────────────
   {
     id: 'zaporizhzhia-counter', label: 'Zaporizhzhia counteroffensive', type: 'counteroffensive',
     dateStart: 20230604, dateEnd: 20231101,
@@ -111,7 +105,6 @@ export const OPERATION_ARROWS: OperationArrow[] = [
     color: CNT,
   },
 
-  // ── Oct 2023–Feb 2024: Avdiivka ───────────────────────────────────────
   {
     id: 'avdiivka-north', label: 'Avdiivka pincer (north)', type: 'attack',
     dateStart: 20231001, dateEnd: 20240217,
@@ -125,7 +118,6 @@ export const OPERATION_ARROWS: OperationArrow[] = [
     color: ATK,
   },
 
-  // ── Aug–Nov 2024: Kursk incursion ─────────────────────────────────────
   {
     id: 'kursk', label: 'Kursk incursion', type: 'counteroffensive',
     dateStart: 20240806, dateEnd: 20241120,

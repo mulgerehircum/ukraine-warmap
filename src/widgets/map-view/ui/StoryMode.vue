@@ -66,8 +66,10 @@ function dotClick(i: number) {
 .story-bar {
   position: absolute;
   bottom: 72px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: fit-content;
   z-index: 30;
   display: flex;
   align-items: center;
@@ -146,6 +148,7 @@ function dotClick(i: number) {
 }
 
 @media (max-width: 640px) {
+  .story-bar  { bottom: 96px; }
   .story-dots { display: none; }
 }
 

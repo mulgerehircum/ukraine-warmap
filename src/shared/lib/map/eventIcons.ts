@@ -27,7 +27,6 @@ function makeIcon(type: string, color: string): ImageData {
   ctx.lineJoin = 'round'
   ctx.lineCap  = 'round'
 
-  // ── Frame ──────────────────────────────────────────────────────────
   ctx.beginPath()
   if (type === 'S' || type === 'D' || type === 'L') {
     // Air: pentagon
@@ -47,7 +46,6 @@ function makeIcon(type: string, color: string): ImageData {
   ctx.strokeStyle = 'rgba(0,0,0,0.45)'
   ctx.stroke()
 
-  // ── Inner symbol (white) ───────────────────────────────────────────
   ctx.strokeStyle = 'rgba(255,255,255,0.9)'
   ctx.fillStyle   = 'rgba(255,255,255,0.9)'
   ctx.lineWidth   = 1.2

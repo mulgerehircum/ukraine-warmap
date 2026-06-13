@@ -15,8 +15,10 @@ defineProps<{ count: number }>()
 .alert-badge {
   position: absolute;
   top: 62px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: fit-content;
   z-index: 10;
   display: flex;
   align-items: center;

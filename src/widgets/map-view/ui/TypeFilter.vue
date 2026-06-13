@@ -54,8 +54,10 @@ function setAll(on: boolean) {
 .type-filter {
   position: absolute;
   bottom: 82px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: fit-content;
   z-index: 1;
   display: flex;
   align-items: center;
@@ -115,6 +117,7 @@ function setAll(on: boolean) {
 }
 
 @media (max-width: 640px) {
+  .type-filter { bottom: 96px; }
   .label { display: none; }
   .pill  { padding: 4px 5px; }
 }

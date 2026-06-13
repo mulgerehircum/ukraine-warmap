@@ -40,6 +40,7 @@ const articleUrl        = ref<string | null>(null)
 const isMilestoneOpen   = ref(false)
 
 watch(() => props.milestoneUrl, (next) => {
+  if (window.innerWidth <= 640) return
   if (next && (articleUrl.value === null || isMilestoneOpen.value)) {
     articleUrl.value = next
     isMilestoneOpen.value = true
@@ -49,7 +50,7 @@ watch(() => props.milestoneUrl, (next) => {
   }
 })
 
-const open       = ref(true)
+const open       = ref(window.innerWidth > 640)
 const loading    = ref(false)
 const allEvents  = ref<ProcessedEvent[]>([])
 const dateLabel  = ref('')

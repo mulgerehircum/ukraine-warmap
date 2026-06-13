@@ -13,12 +13,13 @@ import { initThreeLayer } from './threeLayer'
 import { addArrowsLayer } from './arrows'
 
 export function initMap(container: HTMLElement): Map {
+  const mobile = window.innerWidth <= 640
   const map = new Map({
     container,
     style: 'https://demotiles.maplibre.org/style.json',
     center: [MAP_CENTER_LON, MAP_CENTER_LAT],
-    zoom: MAP_ZOOM,
-    minZoom: MAP_MIN_ZOOM,
+    zoom: mobile ? 4 : MAP_ZOOM,
+    minZoom: mobile ? 3.5 : MAP_MIN_ZOOM,
     maxBounds: MAP_MAX_BOUNDS,
     pitch: 45,
     bearing: 0,

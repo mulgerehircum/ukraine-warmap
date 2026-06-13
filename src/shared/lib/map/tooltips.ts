@@ -105,7 +105,6 @@ export function addTooltips(map: Map): void {
     }, 80)
   }
 
-  // ── Event clusters ───────────────────────────────────────────────
   map.on('mouseenter', 'events-cluster', async (e) => {
     overCluster = true
     map.getCanvas().style.cursor = 'pointer'
@@ -172,7 +171,6 @@ export function addTooltips(map: Map): void {
     map.easeTo({ center: [lng, lat], zoom, duration: 350 })
   })
 
-  // ── Events ──────────────────────────────────────────────────────
   map.on('mouseenter', 'events-circles', () => {
     overEvent = true
     map.getCanvas().style.cursor = 'pointer'
@@ -221,7 +219,6 @@ export function addTooltips(map: Map): void {
     if (urls.length) window.open(urls[0], '_blank', 'noopener')
   })
 
-  // ── Oblast event counts (low zoom) ───────────────────────────────
   map.on('mouseenter', 'events-oblast-counts', (e) => {
     map.getCanvas().style.cursor = 'pointer'
     const f = e.features?.[0]
@@ -253,7 +250,6 @@ export function addTooltips(map: Map): void {
     map.easeTo({ center: [lng, lat], zoom: EVENT_DETAIL_MIN_ZOOM + 1, duration: 400 })
   })
 
-  // ── Honorary events (always visible) ────────────────────────────
   map.on('mouseenter', 'honorary-events', (e) => {
     overHonorary = true
     map.getCanvas().style.cursor = 'pointer'
@@ -283,7 +279,6 @@ export function addTooltips(map: Map): void {
     if (url) window.open(url, '_blank', 'noopener')
   })
 
-  // ── Cities ──────────────────────────────────────────────────────
   map.on('mouseenter', 'city-dots', (e) => {
     overCity = true
     if (overCluster || overEvent) return
@@ -306,7 +301,6 @@ export function addTooltips(map: Map): void {
     maybeRemove()
   })
 
-  // ── Oblast choropleth ────────────────────────────────────────────
   map.on('mouseenter', 'oblast-choropleth', () => {
     overOblastChoropleth = true
     map.getCanvas().style.cursor = 'crosshair'
@@ -350,7 +344,6 @@ export function addTooltips(map: Map): void {
     maybeRemove()
   })
 
-  // ── Occupation ──────────────────────────────────────────────────
   map.on('mousemove', 'occupation-fill', (e) => {
     if (overCity || overEvent || overCluster || overHonorary || overOblastChoropleth) return
     const f = e.features?.[0]

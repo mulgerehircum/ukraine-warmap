@@ -29,7 +29,6 @@ let normalized: Record<GroupKey, number[]> = {} as any
 let ro: ResizeObserver | null = null
 let dragging = false
 
-// ── Zoom lens ─────────────────────────────────────────────────────────
 const zoomVisible   = ref(false)
 const zoomCursorDay = ref(0)
 const zoomRadius    = ref(45)
@@ -198,7 +197,6 @@ function drawZoomLens(ctx: CanvasRenderingContext2D, W: number, H: number) {
   }
 }
 
-// ── Playback state ────────────────────────────────────────────────────
 const playing  = ref(false)
 const curDay   = ref(0)
 let dayFrac    = 0
@@ -226,7 +224,6 @@ function xToDay(x: number): number {
   return Math.max(0, Math.min(len - 1, Math.round((x / W) * (len - 1))))
 }
 
-// ── Playback ──────────────────────────────────────────────────────────
 function emitDay(day: number) {
   const d = new Date(WAR_START_MS + day * MS_PER_DAY)
   d.setUTCHours(0, 0, 0, 0)

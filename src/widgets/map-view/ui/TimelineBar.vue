@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { MILESTONES } from '../../../shared/data/milestones'
 import { accentRgba } from '../../../shared/constants/aero'
 
@@ -10,11 +10,9 @@ const PLAY_SPEED   = 20 // days per second
 const props = defineProps<{ activeDate: Date; autoPlay?: boolean; storyActive?: boolean; storyPaused?: boolean }>()
 const emit  = defineEmits<{ change: [date: Date]; playing: [value: boolean]; storyStart: []; storyTogglePause: []; storyStop: [] }>()
 
-// ── Data ─────────────────────────────────────────────────────────────
 const counts   = ref<number[]>([])
 const maxCount = ref(1)
 
-// ── Position ──────────────────────────────────────────────────────────
 let dayFrac     = 0
 const maxDay    = computed(() => Math.floor((Date.now() - WAR_START_MS) / MS_PER_DAY))
 const viewStart = ref(0)
@@ -30,7 +28,6 @@ watch(() => props.activeDate, (d) => {
   if (Math.floor(dayFrac) !== day) { dayFrac = day; curDay.value = day; draw() }
 })
 
-// ── Milestones ─────────────────────────────────────────────────────────
 function dateIntToDay(di: number): number {
   const y = Math.floor(di / 10000)
   const m = Math.floor((di % 10000) / 100) - 1
@@ -39,7 +36,6 @@ function dateIntToDay(di: number): number {
 }
 const milestoneDays = MILESTONES.map(m => dateIntToDay(m.dateInt))
 
-// ── Zoom lens ──────────────────────────────────────────────────────────
 const zoomVisible     = ref(false)
 const zoomCursorDay   = ref(0)
 const zoomRadius      = ref(45)   // days on each side of centre
@@ -93,7 +89,6 @@ function dayFromLensX(clientX: number): number | null {
   return Math.round(zVS + ((cssX - lx) / LENS_W_CSS) * zoomRadius.value * 2)
 }
 
-// ── Canvas ─────────────────────────────────────────────────────────────
 const canvasEl = ref<HTMLCanvasElement | null>(null)
 
 function setupCanvas() {
@@ -483,7 +478,83 @@ function draw() {
   if (zoomVisible.value) drawZoomLens(ctx, dpr, PW, PH, W, H, vS, vLen)
 }
 
-// ── Interaction ────────────────────────────────────────────────────────
+const mobileZoomEl      = ref<HTMLCanvasElement | null>(null)
+const mobileScrubbing   = ref(false)
+
+function drawMobileZoom() {
+  const c = mobileZoomEl.value
+  if (!c) return
+  const dpr = Math.min(window.devicePixelRatio || 1, 2)
+  const W   = c.offsetWidth
+  const H   = c.offsetHeight
+  if (c.width !== Math.round(W * dpr) || c.height !== Math.round(H * dpr)) {
+    c.width  = Math.round(W * dpr)
+    c.height = Math.round(H * dpr)
+  }
+  const ctx = c.getContext('2d')
+  if (!ctx) return
+
+  const PW        = c.width
+  const PH        = c.height
+  const labelH    = Math.round(28 * dpr)
+  const barPH     = PH - labelH
+  const zDay      = zoomCursorDay.value
+  const zVS       = zDay - zoomRadius.value
+  const zVE       = zDay + zoomRadius.value
+  const zLen      = zVE - zVS
+  const curPX     = Math.max(0, Math.min(PW, Math.round(((dayFrac - zVS) / zLen) * PW)))
+
+  ctx.clearRect(0, 0, PW, PH)
+
+  // background
+  ctx.fillStyle = 'rgba(4, 9, 18, 0.88)'
+  ctx.fillRect(0, 0, PW, PH)
+
+  // past fill
+  buildZoomPath(ctx, 0, curPX, PW, barPH, zVS, zLen, barPH)
+  ctx.fillStyle = makePastGradient(ctx, 0, barPH)
+  ctx.fill()
+
+  // future ghost
+  if (curPX < PW) {
+    buildZoomPath(ctx, curPX, PW, PW, barPH, zVS, zLen, barPH)
+    const futG = ctx.createLinearGradient(0, 0, 0, barPH)
+    futG.addColorStop(0.0,  'rgba(255,255,255,0.0)')
+    futG.addColorStop(0.06, 'rgba(255,255,255,0.22)')
+    futG.addColorStop(0.3,  accentRgba(0.15))
+    futG.addColorStop(1.0,  accentRgba(0.0))
+    ctx.fillStyle = futG; ctx.fill()
+  }
+
+  // milestone ticks
+  for (const md of milestoneDays) {
+    if (md < zVS || md > zVE) continue
+    const px = Math.round((md - zVS) / zLen * PW)
+    ctx.fillStyle = 'rgba(255, 180, 0, 0.55)'
+    ctx.fillRect(px, 0, Math.max(1, dpr), barPH)
+  }
+
+  // playhead glow
+  ctx.save()
+  ctx.filter = `blur(${5 * dpr}px)`
+  ctx.fillStyle = accentRgba(0.45)
+  ctx.fillRect(curPX - 6 * dpr, 0, 12 * dpr, barPH)
+  ctx.restore()
+
+  // playhead line
+  ctx.fillStyle = accentRgba(1)
+  ctx.fillRect(curPX - dpr, 0, 2 * dpr, barPH)
+
+  // date label
+  const dateStr = new Date(WAR_START_MS + dayFrac * MS_PER_DAY)
+    .toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+  ctx.font          = `700 ${Math.round(13 * dpr)}px "Segoe UI", system-ui, sans-serif`
+  ctx.fillStyle     = 'rgba(220, 240, 255, 0.95)'
+  ctx.textAlign     = 'center'
+  ctx.textBaseline  = 'middle'
+  ctx.fillText(dateStr, PW / 2, barPH + labelH / 2)
+}
+
 let dragging    = false
 let lastEmitDay = -1
 const hoverDay  = ref<number | null>(null)
@@ -499,6 +570,7 @@ function dayFromClientX(clientX: number): number {
 function seekTo(day: number) {
   const d = Math.max(0, Math.min(day, maxDay.value))
   dayFrac = d; curDay.value = d; draw()
+  if (mobileScrubbing.value) drawMobileZoom()
   if (d !== lastEmitDay) { lastEmitDay = d; emitDay(d) }
 }
 
@@ -538,7 +610,12 @@ function onPointerDown(e: PointerEvent) {
   if (playing.value) stopPlay()
   dragging = true; hoverDay.value = null
   ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
-  seekTo(dayFromClientX(e.clientX))
+  const day = dayFromClientX(e.clientX)
+  if (e.pointerType === 'touch') {
+    mobileScrubbing.value = true
+    zoomCursorDay.value = day
+  }
+  seekTo(day)
 }
 function onPointerMove(e: PointerEvent) {
   const day = dayFromClientX(e.clientX)
@@ -547,7 +624,7 @@ function onPointerMove(e: PointerEvent) {
     zoomHoverDay.value = dayFromLensX(e.clientX)
     draw(); return
   }
-  if (dragging) { seekTo(day); return }
+  if (dragging) { if (mobileScrubbing.value) zoomCursorDay.value = day; seekTo(day); return }
   hoverDay.value = day
   const lensDay = dayFromLensX(e.clientX)
   zoomHoverDay.value = lensDay
@@ -559,6 +636,11 @@ function onPointerMove(e: PointerEvent) {
 }
 function onPointerUp() {
   dragging = false; zoomDragging = false
+  if (mobileScrubbing.value) {
+    mobileScrubbing.value = false
+    const c = mobileZoomEl.value
+    if (c) { const ctx = c.getContext('2d'); ctx?.clearRect(0, 0, c.width, c.height) }
+  }
   setCursor(handleHovered.value ? 'grab' : 'crosshair')
 }
 function onPointerLeave() {
@@ -568,7 +650,6 @@ function onPointerLeave() {
   draw()
 }
 
-// ── Playback ───────────────────────────────────────────────────────────
 const playing = ref(false)
 let rafId: number | null = null
 let lastTs: number | null = null
@@ -619,10 +700,10 @@ function handlePlayClick() {
   }
 }
 
-// ── Lifecycle ──────────────────────────────────────────────────────────
 onMounted(async () => {
   dayFrac = Math.floor((props.activeDate.getTime() - WAR_START_MS) / MS_PER_DAY)
   curDay.value = dayFrac
+  await nextTick()
   setupCanvas(); draw()
   try {
     const res  = await fetch('/data/timeline-summary.json')
@@ -654,6 +735,7 @@ function onKeyDown(e: KeyboardEvent) {
 
 <template>
   <div class="timeline">
+    <canvas ref="mobileZoomEl" class="mobile-zoom" />
     <button
       class="play-btn aero-icon-btn"
       :class="{ 'is-active': storyActive ? !storyPaused : playing }"
@@ -700,6 +782,8 @@ function onKeyDown(e: KeyboardEvent) {
   align-items: center;
   gap: 12px;
   padding: 0 16px;
+  touch-action: none;
+  user-select: none;
   background: linear-gradient(
     to bottom,
     transparent                0%,
@@ -732,6 +816,8 @@ function onKeyDown(e: KeyboardEvent) {
   cursor: crosshair;
   display: block;
   border-radius: 2px;
+  touch-action: none;
+  user-select: none;
 }
 
 
@@ -782,16 +868,32 @@ function onKeyDown(e: KeyboardEvent) {
   50%       { transform: scale(0.6); opacity: 0.3; }
 }
 
+.mobile-zoom { display: none; }
+
 @media (max-width: 640px) {
   .timeline {
-    padding: 0 12px;
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    display: grid;
+    grid-template-columns: 32px 1fr 50px;
+    grid-template-rows: 44px 28px;
+    grid-template-areas: "hist hist hist" "play date live";
     height: auto;
-    min-height: 72px;
-    gap: 8px;
+    padding: 6px 12px calc(6px + env(safe-area-inset-bottom, 0px));
+    column-gap: 8px;
+    row-gap: 4px;
+    align-items: center;
   }
-  .tl-date  { min-width: 80px; font-size: 11px; }
-  .play-btn { width: 34px; height: 34px; }
-  .live-btn { min-width: 54px; font-size: 9px; }
+  .histogram { grid-area: hist; height: 44px; align-self: stretch; width: 100%; }
+  .play-btn  { grid-area: play; width: 32px; height: 32px; }
+  .tl-date   { grid-area: date; text-align: center; font-size: 10px; min-width: 0; }
+  .live-btn  { grid-area: live; width: 100%; min-width: 0; font-size: 9px; padding: 4px 5px; }
+  .mobile-zoom {
+    display: block;
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    pointer-events: none;
+  }
 }
 </style>
