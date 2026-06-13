@@ -63,8 +63,13 @@ const milestoneUrl = computed(() =>
   activeMilestoneIdx.value !== null ? MILESTONES[activeMilestoneIdx.value].url : null
 )
 
+const milestoneCardDismissed = ref(false)
+const visibleMilestoneIdx = computed(() =>
+  milestoneCardDismissed.value ? null : activeMilestoneIdx.value
+)
+
 const videoHidden = ref(false)
-watch(activeMilestoneIdx, () => { videoHidden.value = false })
+watch(activeMilestoneIdx, () => { videoHidden.value = false; milestoneCardDismissed.value = false })
 watch(activeMilestoneIdx, (idx) => {
   setMilestoneHighlight(idx !== null ? MILESTONES[idx].oblasts : [])
 })
@@ -359,7 +364,7 @@ function _toggleThreeD() {
 <template>
   <div class="map-wrapper">
     <div ref="mapContainer" class="map-view" />
-    <WarDayCounter :date="activeDate" />
+    <WarDayCounter :date="activeDate" @dismiss="milestoneCardDismissed = !milestoneCardDismissed" />
     <AlertBadge :count="isLive ? alertCount : 0" />
     <AlertDots :map="mapInstance" :alerted-ids="alertDotIds" />
     <CompassSelector :mode="mode" :bearing="bearing" @select="selectMode" @reset-north="resetNorth" />
@@ -381,14 +386,14 @@ function _toggleThreeD() {
 
     <div class="milestone-stack">
       <MilestoneCard
-        :index="activeMilestoneIdx"
+        :index="visibleMilestoneIdx"
         :video-hidden="videoHidden"
         :show-progress="storyActive && storyPhase === 'dwelling'"
         :progress-paused="storyPaused"
         :progress-duration="DWELL_MS"
         @toggle-video="videoHidden = !videoHidden"
       />
-      <MilestoneVideo v-if="!videoHidden" :index="activeMilestoneIdx" />
+      <MilestoneVideo v-if="!videoHidden" :index="visibleMilestoneIdx" />
     </div>
 
     <StoryMode

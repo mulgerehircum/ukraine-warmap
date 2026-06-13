@@ -4,6 +4,7 @@ import { computed } from 'vue'
 const WAR_START = new Date(Date.UTC(2022, 1, 24)) // Feb 24, 2022
 
 const props = defineProps<{ date: Date }>()
+const emit = defineEmits<{ dismiss: [] }>()
 
 const dayCount = computed(() => {
   const ms = props.date.getTime() - WAR_START.getTime()
@@ -18,7 +19,7 @@ const dateLabel = computed(() =>
 </script>
 
 <template>
-  <div class="war-counter">
+  <div class="war-counter" @click="emit('dismiss')">
     <span class="war-counter__number">{{ dayCount }}</span>
     <span class="war-counter__unit">days</span>
     <span class="war-counter__sub">of full-scale war · {{ dateLabel }}</span>
@@ -81,5 +82,11 @@ const dateLabel = computed(() =>
   .war-counter__sub { display: none; }
   .war-counter__number { font-size: 18px; }
   .war-counter__unit   { font-size: 11px; }
+  .war-counter {
+    pointer-events: auto;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .war-counter:active { opacity: 0.75; }
 }
 </style>
