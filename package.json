@@ -1,0 +1,32 @@
+{
+  "name": "project-map",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:events": "node scripts/build-events.mjs",
+    "build:timeline": "node scripts/build-timeline-summary.mjs",
+    "build:choropleth": "node scripts/build-choropleth.mjs",
+    "build:choropleth-timeline": "node scripts/build-choropleth-timeline.mjs",
+    "build:cities": "node scripts/build-cities.mjs",
+    "build:type-timeline": "node scripts/build-type-timeline.mjs",
+    "download:landmarks": "node --env-file=.env scripts/download-landmarks.mjs"
+  },
+  "dependencies": {
+    "@types/three": "^0.184.0",
+    "maplibre-gl": "^5.24.0",
+    "three": "^0.184.0",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "gltf-pipeline": "^4.3.1",
+    "jszip": "^3.10.1",
+    "typescript": "^6.0.3",
+    "vite": "^6.3.3",
+    "vue-tsc": "^3.2.7"
+  }
+}

@@ -1,0 +1,14 @@
+node_modules
+dist
+.vite
+.env
+.env.local
+_cacache
+_logs
+_npx
+_update-notifier-last-checked
+.claude
+.geonames-tmp
+CLAUDE.md
+TODO.md
+scripts/fix_kyiv_glb.py
