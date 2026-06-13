@@ -117,7 +117,7 @@ function setAll(on: boolean) {
 }
 
 @media (max-width: 640px) {
-  .type-filter { bottom: 96px; }
+  .type-filter { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
   .label { display: none; }
   .pill  { padding: 4px 5px; }
 }

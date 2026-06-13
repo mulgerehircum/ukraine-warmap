@@ -148,7 +148,7 @@ function dotClick(i: number) {
 }
 
 @media (max-width: 640px) {
-  .story-bar  { bottom: 96px; }
+  .story-bar  { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
   .story-dots { display: none; }
 }
 
