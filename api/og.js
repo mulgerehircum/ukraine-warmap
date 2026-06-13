@@ -1,3 +1,37 @@
+function isTelegramUrl(url) {
+  try {
+    const h = new URL(url).hostname
+    return h === 't.me' || h === 'telegram.me'
+  } catch { return false }
+}
+
+// t.me/channel/postId → t.me/s/channel?before=postId+1
+function telegramStaticUrl(url) {
+  try {
+    const u = new URL(url)
+    const parts = u.pathname.replace(/^\//, '').split('/')
+    if (parts.length < 2) return null
+    const [channel, postId] = parts
+    const n = parseInt(postId, 10)
+    if (!n) return null
+    return { fetchUrl: `https://t.me/s/${channel}?before=${n + 1}`, postKey: `${channel}/${n}` }
+  } catch { return null }
+}
+
+function extractTelegramText(html, postKey) {
+  const anchor = `data-post="${postKey}"`
+  const idx = html.indexOf(anchor)
+  if (idx < 0) return null
+  const chunk = html.slice(idx, idx + 6000)
+  const m = chunk.match(/class="[^"]*tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/)
+  if (!m) return null
+  const text = m[1]
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+  return decodeEntities(text).trim().slice(0, 400) || null
+}
+
 function decodeEntities(str) {
   return str
     .replace(/&amp;/gi, '&')
@@ -29,14 +63,16 @@ export default async function handler(req, res) {
     return
   }
 
+  const tg = isTelegramUrl(url) ? telegramStaticUrl(url) : null
+  const fetchUrl = tg ? tg.fetchUrl : url
+
   try {
-    const r = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; project-map-bot/1.0)' },
+    const r = await fetch(fetchUrl, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36' },
       signal: AbortSignal.timeout(6000),
     })
     const buf = await r.arrayBuffer()
 
-    // Detect charset: Content-Type header wins, then sniff <meta charset>
     let charset = 'utf-8'
     const ctCharset = (r.headers.get('content-type') ?? '').match(/charset=([^\s;]+)/i)?.[1]
     if (ctCharset) {
@@ -58,6 +94,7 @@ export default async function handler(req, res) {
       null
 
     const description =
+      (tg ? extractTelegramText(html, tg.postKey) : null) ??
       extractMeta(html, 'og:description') ??
       extractMeta(html, 'twitter:description') ??
       null
