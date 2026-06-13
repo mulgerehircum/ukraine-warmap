@@ -48,11 +48,10 @@ export function addOccupationLayer(map: Map): void {
       id: 'occupation-glow',
       type: 'line',
       source: 'occupation',
-      filter: ['!=', STATUS_EXPR as any, 'UA'],
       paint: {
         'line-color': colorExpr as any,
         'line-width': ['interpolate', ['linear'], ['zoom'], 4, 6, 10, 14],
-        'line-opacity': 0.12,
+        'line-opacity': ['match', STATUS_EXPR, 'UA', 0, 0.12] as any,
         'line-blur': 5,
       },
     },
@@ -65,7 +64,6 @@ export function addOccupationLayer(map: Map): void {
       id: 'occupation-line',
       type: 'line',
       source: 'occupation',
-      filter: ['!=', STATUS_EXPR as any, 'UA'],
       paint: {
         'line-color': [
           'match', STATUS_EXPR,
@@ -75,7 +73,7 @@ export function addOccupationLayer(map: Map): void {
           '#ffffff',
         ] as any,
         'line-width': ['interpolate', ['linear'], ['zoom'], 4, 0.6, 10, 1.5],
-        'line-opacity': 0.55,
+        'line-opacity': ['match', STATUS_EXPR, 'UA', 0, 0.55] as any,
       },
     },
     'oblast-borders-casing',
