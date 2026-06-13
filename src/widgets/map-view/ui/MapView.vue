@@ -214,7 +214,8 @@ const threeDEnabled = ref(true)
 const isLive = computed(() => {
   const now = new Date()
   const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
-  return activeDate.value.getTime() >= todayUTC - 86_400_000
+  const activeDayUTC = Date.UTC(activeDate.value.getUTCFullYear(), activeDate.value.getUTCMonth(), activeDate.value.getUTCDate())
+  return activeDayUTC >= todayUTC
 })
 
 const EMPTY_ALERT_SET = new Set<number>()
