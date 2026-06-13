@@ -113,4 +113,9 @@ function setAll(on: boolean) {
   color: var(--aero-accent);
   border-color: rgba(var(--aero-accent-rgb), 0.3);
 }
+
+@media (max-width: 640px) {
+  .label { display: none; }
+  .pill  { padding: 4px 5px; }
+}
 </style>

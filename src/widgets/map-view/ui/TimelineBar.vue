@@ -781,4 +781,17 @@ function onKeyDown(e: KeyboardEvent) {
   0%, 100% { transform: scale(1);   opacity: 1; }
   50%       { transform: scale(0.6); opacity: 0.3; }
 }
+
+@media (max-width: 640px) {
+  .timeline {
+    padding: 0 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    height: auto;
+    min-height: 72px;
+    gap: 8px;
+  }
+  .tl-date  { min-width: 80px; font-size: 11px; }
+  .play-btn { width: 34px; height: 34px; }
+  .live-btn { min-width: 54px; font-size: 9px; }
+}
 </style>

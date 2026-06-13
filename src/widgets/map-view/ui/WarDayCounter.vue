@@ -74,4 +74,10 @@ const dateLabel = computed(() =>
   padding-left: 4px;
   border-left: 1px solid rgba(var(--aero-accent-rgb), 0.18);
 }
+
+@media (max-width: 640px) {
+  .war-counter__sub { display: none; }
+  .war-counter__number { font-size: 18px; }
+  .war-counter__unit   { font-size: 11px; }
+}
 </style>

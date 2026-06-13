@@ -145,6 +145,10 @@ function dotClick(i: number) {
   background: rgba(255,255,255,0.35);
 }
 
+@media (max-width: 640px) {
+  .story-dots { display: none; }
+}
+
 .story-controls {
   display: flex;
   align-items: center;

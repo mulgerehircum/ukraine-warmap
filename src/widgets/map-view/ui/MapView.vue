@@ -494,4 +494,9 @@ function toggleThreeD() {
   color: var(--aero-text);
   box-shadow: var(--aero-shadow-btn), var(--aero-glow), var(--aero-inset-glow);
 }
+
+@media (max-width: 640px) {
+  .milestone-stack { top: 72px; }
+  .attribution-btn { display: none; }
+}
 </style>

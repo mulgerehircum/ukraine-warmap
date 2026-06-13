@@ -684,4 +684,11 @@ async function fetchAllOg(evs: ProcessedEvent[], gen: number) {
   border-color: rgba(255,255,255,0.14);
   color: rgba(255,255,255,0.6);
 }
+
+@media (max-width: 640px) {
+  .feed {
+    width: calc(100vw - 28px);
+    max-height: calc(100dvh - 14px - 100px - 16px);
+  }
+}
 </style>

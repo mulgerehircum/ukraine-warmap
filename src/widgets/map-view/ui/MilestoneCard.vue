@@ -241,4 +241,9 @@ watch(milestone, async (m) => {
   opacity: 0;
   transform: translateY(-10px) scale(0.95);
 }
+
+@media (max-width: 640px) {
+  .milestone-card { width: calc(100vw - 28px); }
+  .ms-image-wrap  { height: 110px; }
+}
 </style>

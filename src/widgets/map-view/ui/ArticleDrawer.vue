@@ -314,4 +314,11 @@ function onIframeLoad(e: Event) {
 .drawer-leave-to {
   transform: translateX(100%);
 }
+
+@media (max-width: 640px) {
+  .article-drawer {
+    width: 100vw;
+    border-left: none;
+  }
+}
 </style>
