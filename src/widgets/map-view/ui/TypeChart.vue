@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import { loadTypeTimeline, GROUP_COLORS, GROUP_ORDER } from '../../../shared/lib/map/typeTimeline'
 import type { TypeTimelineData, GroupKey } from '../../../shared/lib/map/typeTimeline'
 
@@ -425,6 +425,7 @@ function onPointerLeave() {
 onMounted(async () => {
   dayFrac = dateToDay(props.activeDate)
   curDay.value = Math.floor(dayFrac)
+  await nextTick()
   data = await loadTypeTimeline()
   maxDay = data[GROUP_ORDER[0]].length - 1
   prepare(data)
@@ -488,6 +489,8 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 12px;
   padding: 0 16px;
+  touch-action: none;
+  user-select: none;
   background: linear-gradient(
     to bottom,
     transparent            0%,
@@ -589,5 +592,24 @@ onBeforeUnmount(() => {
   border-radius: 50%;
   flex-shrink: 0;
   opacity: 0.85;
+}
+
+@media (max-width: 640px) {
+  .type-chart {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    grid-template-rows: 44px 28px;
+    grid-template-areas: "canvas canvas canvas" "play date end";
+    height: auto;
+    padding: 6px 12px calc(6px + env(safe-area-inset-bottom, 0px));
+    column-gap: 8px;
+    row-gap: 4px;
+    align-items: center;
+  }
+  .tc-canvas-wrap { grid-area: canvas; align-self: stretch; width: 100%; }
+  .tc-canvas      { width: 100%; height: 100%; }
+  .play-btn       { grid-area: play; width: 32px; height: 32px; }
+  .tl-date        { grid-area: date; text-align: center; font-size: 10px; min-width: 0; }
+  .tl-end         { grid-area: end; font-size: 9px; }
 }
 </style>
