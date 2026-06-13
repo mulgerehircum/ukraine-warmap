@@ -228,8 +228,17 @@ watch(isLive, (live) => {
   else { pauseAlerts(); alertCount.value = 0; alertedIds.value = new Set() }
 })
 let map: Map | null = null
+const webglAvailable = ref(true)
+
+function checkWebGL(): boolean {
+  try {
+    const canvas = document.createElement('canvas')
+    return !!(canvas.getContext('webgl2') ?? canvas.getContext('webgl'))
+  } catch { return false }
+}
 
 onMounted(() => {
+  if (!checkWebGL()) { webglAvailable.value = false; return }
   if (!mapContainer.value) return
   map = initMap(mapContainer.value)
   mapInstance.value = map
@@ -363,7 +372,39 @@ function _toggleThreeD() {
 
 <template>
   <div class="map-wrapper">
-    <div ref="mapContainer" class="map-view" />
+    <div v-if="!webglAvailable" class="webgl-error">
+      <div class="webgl-card">
+        <svg class="webgl-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2.5" stroke-dasharray="6 4"/>
+          <path d="M20 32 Q32 12 44 32 Q32 52 20 32Z" stroke="currentColor" stroke-width="2" fill="none"/>
+          <line x1="32" y1="4" x2="32" y2="60" stroke="currentColor" stroke-width="2"/>
+          <line x1="4" y1="32" x2="60" y2="32" stroke="currentColor" stroke-width="2"/>
+          <line x1="14" y1="14" x2="50" y2="50" stroke="rgba(255,80,80,0.8)" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="50" y1="14" x2="14" y2="50" stroke="rgba(255,80,80,0.8)" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <h2 class="webgl-title">WebGL is disabled</h2>
+        <p class="webgl-desc">This map requires WebGL to render. Your browser has it turned off, usually as a privacy or fingerprinting measure.</p>
+        <div class="webgl-steps">
+          <div class="webgl-browser">
+            <span class="webgl-browser-name">LibreWolf / Firefox</span>
+            <ol>
+              <li>Type <code>about:config</code> in the address bar</li>
+              <li>Search for <code>webgl.disabled</code></li>
+              <li>Set it to <code>false</code> and reload</li>
+            </ol>
+          </div>
+          <div class="webgl-browser">
+            <span class="webgl-browser-name">Chrome / Edge</span>
+            <ol>
+              <li>Go to <code>chrome://settings</code></li>
+              <li>Search "hardware acceleration"</li>
+              <li>Enable it and relaunch</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-else ref="mapContainer" class="map-view" />
     <WarDayCounter :date="activeDate" @dismiss="milestoneCardDismissed = !milestoneCardDismissed" />
     <AlertBadge :count="isLive ? alertCount : 0" />
     <AlertDots :map="mapInstance" :alerted-ids="alertDotIds" />
@@ -444,6 +485,114 @@ function _toggleThreeD() {
 .tt-status {
   font-size: 12px;
   color: var(--aero-text-dim);
+}
+
+.webgl-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #07090f;
+  z-index: 9999;
+  padding: 24px;
+}
+
+.webgl-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  max-width: 480px;
+  width: 100%;
+  background: var(--aero-glass);
+  backdrop-filter: blur(24px) saturate(140%);
+  border: var(--aero-border);
+  border-radius: var(--aero-radius);
+  box-shadow: var(--aero-shadow), var(--aero-inset-glow);
+  padding: 40px 36px;
+  text-align: center;
+}
+
+.webgl-icon {
+  width: 64px;
+  height: 64px;
+  color: var(--aero-accent);
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.webgl-title {
+  font-family: var(--aero-font);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--aero-text);
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+
+.webgl-desc {
+  font-family: var(--aero-font);
+  font-size: 13px;
+  color: var(--aero-text-dim);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.webgl-steps {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+}
+
+.webgl-browser {
+  flex: 1;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.webgl-browser-name {
+  font-family: var(--aero-font);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--aero-accent);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.webgl-browser ol {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.webgl-browser li {
+  font-family: var(--aero-font);
+  font-size: 12px;
+  color: var(--aero-text-dim);
+  line-height: 1.5;
+}
+
+.webgl-browser code {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--aero-text);
+}
+
+@media (max-width: 480px) {
+  .webgl-steps { flex-direction: column; }
+  .webgl-card { padding: 28px 20px; }
 }
 </style>
 
