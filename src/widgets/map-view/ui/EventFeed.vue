@@ -57,7 +57,8 @@ const dateLabel  = ref('')
 const ogDescriptions = ref<Record<string, string>>({})
 const expandedTypes  = ref<Record<string, boolean>>({})
 let fetchGen = 0
-let refreshTimer: ReturnType<typeof setTimeout> | null = null
+let listTimer: ReturnType<typeof setTimeout> | null = null
+let ogTimer:   ReturnType<typeof setTimeout> | null = null
 
 const locationEvents   = ref<ProcessedEvent[]>([])
 const locationLoading  = ref(false)
@@ -163,18 +164,25 @@ watch(() => props.eventsKey, () => {
     dateLabel.value = ''
   }
 
-  // Debounce the heavy part: card list swap + OG fetches
-  if (refreshTimer !== null) clearTimeout(refreshTimer)
-  refreshTimer = setTimeout(() => {
-    refreshTimer = null
+  // 350ms: swap card list (no API calls)
+  if (listTimer !== null) clearTimeout(listTimer)
+  listTimer = setTimeout(() => {
+    listTimer = null
     const loaded = getLoadedEvents()
     ogDescriptions.value = {}
     expandedTypes.value  = {}
-    if (!loaded) { allEvents.value = []; return }
-    allEvents.value = loaded.entries
+    allEvents.value = loaded?.entries ?? []
+  }, 350)
+
+  // 800ms: OG fetches — only fires after user settles
+  if (ogTimer !== null) clearTimeout(ogTimer)
+  ogTimer = setTimeout(() => {
+    ogTimer = null
+    const loaded = getLoadedEvents()
+    if (!loaded?.entries.length) return
     loading.value = true
     fetchAllOg(loaded.entries, ++fetchGen).finally(() => { loading.value = false })
-  }, 350)
+  }, 800)
 }, { immediate: true })
 
 async function fetchAllOg(evs: ProcessedEvent[], gen: number) {
