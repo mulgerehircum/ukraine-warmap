@@ -309,7 +309,7 @@ async function fetchAllOg(evs: ProcessedEvent[], gen: number) {
   position: absolute;
   top: 14px;
   left: 14px;
-  z-index: 1;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
