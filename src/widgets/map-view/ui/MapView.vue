@@ -17,6 +17,7 @@ import { initLandmarks, updateLandmarks, setLandmarksVisible } from '../../../sh
 import { setAnimating, updateSunLight } from '../../../shared/lib/map/threeLayer'
 import { updateArrowsDate, setArrowsVisible } from '../../../shared/lib/map/arrows'
 import { MILESTONES } from '../../../shared/data/milestones'
+import { track } from '@vercel/analytics'
 import type { MapMode } from './CompassSelector.vue'
 import CompassSelector from './CompassSelector.vue'
 import AttributionModal from './AttributionModal.vue'
@@ -72,6 +73,7 @@ const videoHidden = ref(false)
 watch(activeMilestoneIdx, () => { videoHidden.value = false; milestoneCardDismissed.value = false })
 watch(activeMilestoneIdx, (idx) => {
   setMilestoneHighlight(idx !== null ? MILESTONES[idx].oblasts : [])
+  if (idx !== null) track('milestone_click', { title: MILESTONES[idx].title, idx })
 })
 
 const storyActive  = ref(false)
@@ -292,6 +294,7 @@ async function selectMode(next: MapMode) {
   if (!map || next === mode.value) return
   const isChoropleth = next === 'heatmap'
   mode.value = next
+  track('mode_switch', { mode: next })
   setSatelliteVisible(map, true)
   setOblastChoroplethVisible(isChoropleth)
   setOccupationVisible(map, !isChoropleth)

@@ -5,6 +5,7 @@ import EventTypeIcon from './EventTypeIcon.vue'
 import ArticleDrawer from './ArticleDrawer.vue'
 import { EVENT_TYPE_LABELS, ALL_EVENT_TYPES, getLoadedEvents, queryEventsByLocation, type ProcessedEvent } from '../../../shared/lib/map/events'
 import { fetchOg } from '../../../shared/lib/map/ogFetch'
+import { track } from '@vercel/analytics'
 
 const props = defineProps<{
   visible: boolean
@@ -38,6 +39,12 @@ watch(activeTab, (tab) => {
 
 const articleUrl        = ref<string | null>(null)
 const isMilestoneOpen   = ref(false)
+
+function openArticle(url: string) {
+  articleUrl.value = url
+  isMilestoneOpen.value = false
+  try { track('article_open', { domain: new URL(url).hostname }) } catch { /* invalid URL */ }
+}
 
 watch(() => props.milestoneUrl, (next) => {
   if (window.innerWidth <= 640) return
@@ -282,8 +289,8 @@ async function fetchVisibleOg() {
             :style="{ '--c': group.color }"
             role="button"
             tabindex="0"
-            @click="emit('flyTo', ev.lng, ev.lat); if (ev.urls[0]) { articleUrl = ev.urls[0]; isMilestoneOpen = false }"
-            @keydown.enter.space.prevent="emit('flyTo', ev.lng, ev.lat); if (ev.urls[0]) { articleUrl = ev.urls[0]; isMilestoneOpen = false }"
+            @click="emit('flyTo', ev.lng, ev.lat); if (ev.urls[0]) openArticle(ev.urls[0])"
+            @keydown.enter.space.prevent="emit('flyTo', ev.lng, ev.lat); if (ev.urls[0]) openArticle(ev.urls[0])"
           >
             <div class="feed-card-meta">
               <span class="feed-card-loc">
