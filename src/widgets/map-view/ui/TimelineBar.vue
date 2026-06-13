@@ -8,7 +8,7 @@ const MS_PER_DAY   = 86_400_000
 const PLAY_SPEED   = 20 // days per second
 
 const props = defineProps<{ activeDate: Date; autoPlay?: boolean; storyActive?: boolean; storyPaused?: boolean }>()
-const emit  = defineEmits<{ change: [date: Date]; playing: [value: boolean]; storyStart: []; storyTogglePause: [] }>()
+const emit  = defineEmits<{ change: [date: Date]; playing: [value: boolean]; storyStart: []; storyTogglePause: []; storyStop: [] }>()
 
 // ── Data ─────────────────────────────────────────────────────────────
 const counts   = ref<number[]>([])
@@ -607,6 +607,7 @@ const isLive = computed(() => curDay.value >= maxDay.value - 1)
 
 function handleGoLive() {
   if (playing.value) stopPlay()
+  if (props.storyActive) emit('storyStop')
   seekTo(maxDay.value)
 }
 

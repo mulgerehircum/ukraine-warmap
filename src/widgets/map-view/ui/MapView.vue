@@ -408,7 +408,7 @@ function toggleThreeD() {
     />
 
     <TypeChart v-if="mode === 'heatmap'" :active-date="activeDate" @change="onDateChange" @playing="onPlayingChange" @filter-type="onTypeChartFilter" />
-    <TimelineBar v-else :active-date="activeDate" :auto-play="false" :story-active="storyActive" :story-paused="storyPaused" @change="onDateChange" @playing="onPlayingChange" @story-start="storyStart" @story-toggle-pause="storyTogglePause" />
+    <TimelineBar v-else :active-date="activeDate" :auto-play="false" :story-active="storyActive" :story-paused="storyPaused" @change="onDateChange" @playing="onPlayingChange" @story-start="storyStart" @story-toggle-pause="storyTogglePause" @story-stop="storyStop" />
     <AttributionModal :open="attributionOpen" @close="attributionOpen = false" />
   </div>
 </template>
