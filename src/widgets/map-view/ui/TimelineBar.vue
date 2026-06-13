@@ -136,7 +136,7 @@ function buildContourPath(
     const di    = vS + (px / PW) * vLen
     const count = counts.value[Math.floor(di)] ?? 0
     const y     = PH - Math.max(0, Math.round(count / maxCount.value * barAreaPH))
-    px === fromPX ? ctx.moveTo(px, y) : ctx.lineTo(px, y)
+    if (px === fromPX) ctx.moveTo(px, y); else ctx.lineTo(px, y)
   }
 }
 
@@ -151,7 +151,7 @@ function buildZoomContourPath(
     const day   = zVS + (px / ZW) * zLen
     const count = counts.value[Math.floor(day)] ?? 0
     const y     = PH - Math.max(0, Math.round(count / maxCount.value * barAreaPH))
-    px === fromPX ? ctx.moveTo(px, y) : ctx.lineTo(px, y)
+    if (px === fromPX) ctx.moveTo(px, y); else ctx.lineTo(px, y)
   }
 }
 
@@ -315,7 +315,7 @@ function drawZoomLens(ctx: CanvasRenderingContext2D, dpr: number, PW: number, PH
   const GAP  = Math.round(3.5 * dpr)
   const COLS = 3, ROWS = 2
   const gridW = COLS * DOT + (COLS - 1) * GAP
-  const gridH = ROWS * DOT + (ROWS - 1) * GAP
+  const _gridH = ROWS * DOT + (ROWS - 1) * GAP
   const gx0  = lxPX + LENS_W_PX / 2 - gridW / 2
   const gy0  = Math.round(5 * dpr)
   ctx.save()
@@ -682,8 +682,6 @@ function tick(ts: number) {
   }
   rafId = requestAnimationFrame(tick)
 }
-function togglePlay() { playing.value ? stopPlay() : startPlay() }
-
 const isLive = computed(() => curDay.value >= maxDay.value - 1)
 
 function handleGoLive() {

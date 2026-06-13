@@ -260,7 +260,7 @@ function tick(ts: number) {
   rafId = requestAnimationFrame(tick)
 }
 
-function togglePlay() { playing.value ? stopPlay() : startPlay() }
+function togglePlay() { if (playing.value) stopPlay(); else startPlay() }
 
 watch(() => props.activeDate, (d) => {
   const day = dateToDay(d)

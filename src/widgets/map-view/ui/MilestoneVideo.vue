@@ -11,7 +11,7 @@ function extractYouTubeId(url: string): string | null {
       return u.searchParams.get('v') ?? (u.pathname.startsWith('/shorts/') ? u.pathname.split('/')[2] : null)
     }
     if (u.hostname === 'youtu.be') return u.pathname.slice(1).split('?')[0]
-  } catch {}
+  } catch { /* invalid URL */ }
   return null
 }
 

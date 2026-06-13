@@ -46,7 +46,6 @@ const urlDate = (() => {
   return isNaN(t) ? null : new Date(t)
 })()
 const activeDate = ref<Date>(urlDate ?? new Date())
-const autoPlay = !urlDate
 
 const MS_PER_DAY = 86_400_000
 const activeMilestoneIdx = computed<number | null>(() => {
@@ -350,7 +349,7 @@ function onPlayingChange(playing: boolean) {
   setAnimating(playing)
 }
 
-function toggleThreeD() {
+function _toggleThreeD() {
   threeDEnabled.value = !threeDEnabled.value
   setOblastBarsVisible(threeDEnabled.value)
   setCitySpikesVisible(threeDEnabled.value)
