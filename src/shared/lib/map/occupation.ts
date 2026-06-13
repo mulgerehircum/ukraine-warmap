@@ -51,7 +51,7 @@ export function addOccupationLayer(map: Map): void {
       paint: {
         'line-color': colorExpr as any,
         'line-width': ['interpolate', ['linear'], ['zoom'], 4, 6, 10, 14],
-        'line-opacity': ['match', STATUS_EXPR, 'UA', 0, 0.12] as any,
+        'line-opacity': ['match', STATUS_EXPR, 'RU', 0.12, 'LIBERATED', 0.12, 'CONTESTED', 0.12, 0] as any,
         'line-blur': 5,
       },
     },
@@ -73,7 +73,7 @@ export function addOccupationLayer(map: Map): void {
           '#ffffff',
         ] as any,
         'line-width': ['interpolate', ['linear'], ['zoom'], 4, 0.6, 10, 1.5],
-        'line-opacity': ['match', STATUS_EXPR, 'UA', 0, 0.55] as any,
+        'line-opacity': ['match', STATUS_EXPR, 'RU', 0.55, 'LIBERATED', 0.55, 'CONTESTED', 0.55, 0] as any,
       },
     },
     'oblast-borders-casing',
