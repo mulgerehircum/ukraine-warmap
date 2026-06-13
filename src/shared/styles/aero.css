@@ -1,0 +1,48 @@
+/* ── Glass surface ───────────────────────────────────────────────────────────
+   Apply to any panel-level element that needs the dark translucent look.
+   Override border-radius and box-shadow in the component's scoped style as
+   needed (most panels use --aero-radius-pill, popups use --aero-radius). */
+.aero-panel {
+  background: var(--aero-glass);
+  backdrop-filter: var(--aero-backdrop);
+  border: var(--aero-border);
+  box-shadow: var(--aero-shadow), var(--aero-inset-glow);
+}
+
+/* ── Circular icon button ───────────────────────────────────────────────────
+   Handles shape, colour, all interaction states, and press animation.
+   The consuming component only needs to set width + height. Use .is-active
+   (not :active) to mark a latched-on state (e.g. playing, selected). */
+.aero-icon-btn {
+  border-radius: 50%;
+  border: var(--aero-border);
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--aero-accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  transition:
+    background var(--aero-transition),
+    border-color var(--aero-transition),
+    box-shadow var(--aero-transition),
+    transform var(--aero-transition-fast);
+}
+
+.aero-icon-btn:hover {
+  background: rgba(var(--aero-accent-rgb), 0.15);
+  border: var(--aero-border-hover);
+  box-shadow: var(--aero-glow);
+}
+
+.aero-icon-btn.is-active {
+  background: rgba(var(--aero-accent-rgb), 0.2);
+  border: var(--aero-border-hover);
+  box-shadow: var(--aero-glow);
+}
+
+.aero-icon-btn:active {
+  transform: scale(0.92);
+}
