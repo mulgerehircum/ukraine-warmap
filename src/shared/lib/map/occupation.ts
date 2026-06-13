@@ -42,45 +42,9 @@ export function addOccupationLayer(map: Map): void {
     'oblast-borders-casing',
   )
 
-  // Soft glow along all non-UA borders
-  map.addLayer(
-    {
-      id: 'occupation-glow',
-      type: 'line',
-      source: 'occupation',
-      paint: {
-        'line-color': colorExpr as any,
-        'line-width': ['interpolate', ['linear'], ['zoom'], 4, 6, 10, 14],
-        'line-opacity': ['match', STATUS_EXPR, 'RU', 0.12, 'LIBERATED', 0.12, 'CONTESTED', 0.12, 0] as any,
-        'line-blur': 5,
-      },
-    },
-    'oblast-borders-casing',
-  )
-
-  // Sharp frontline edge
-  map.addLayer(
-    {
-      id: 'occupation-line',
-      type: 'line',
-      source: 'occupation',
-      paint: {
-        'line-color': [
-          'match', STATUS_EXPR,
-          'LIBERATED', '#93c5fd',
-          'RU',        '#fca5a5',
-          'CONTESTED', '#fdba74',
-          '#ffffff',
-        ] as any,
-        'line-width': ['interpolate', ['linear'], ['zoom'], 4, 0.6, 10, 1.5],
-        'line-opacity': ['match', STATUS_EXPR, 'RU', 0.55, 'LIBERATED', 0.55, 'CONTESTED', 0.55, 0] as any,
-      },
-    },
-    'oblast-borders-casing',
-  )
 }
 
-const OCCUPATION_LAYERS = ['occupation-fill', 'occupation-glow', 'occupation-line']
+const OCCUPATION_LAYERS = ['occupation-fill']
 
 export function setOccupationVisible(map: Map, visible: boolean): void {
   const v = visible ? 'visible' : 'none'
