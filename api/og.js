@@ -135,6 +135,7 @@ export default async function handler(req, res) {
       extractMeta(html, 'twitter:image') ??
       null
 
+    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400')
     res.status(200).json({ title, description, image })
   } catch (err) {
     res.status(502).json({ error: String(err) })
