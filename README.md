@@ -4,6 +4,8 @@ An interactive war-event map of Ukraine built with Vue 3, TypeScript, MapLibre G
 Data source: [VIINA dataset](https://github.com/zhukovsd/russia-ukraine-conflict-map) (daily CSV → static JSON).  
 Deployed on Vercel. Data refreshed weekly via GitHub Actions.
 
+![Occupation timelapse — Feb 2022 → Jun 2026](docs/occupation.gif)
+
 ---
 
 ## Features
@@ -16,6 +18,9 @@ Deployed on Vercel. Data refreshed weekly via GitHub Actions.
 - Milestone markers (23 key events) with row-staggered dots; active milestone highlights relevant oblasts in amber
 
 ### Choropleth timeline (heatmap mode)
+
+![Choropleth timelapse — cumulative strikes by oblast](docs/choropleth.gif)
+
 - Stacked area chart showing Airstrike / Drone / Artillery / Ground event breakdown over time — same zoom lens UX as the main timeline
 - **Group filter** — click any legend pill to highlight that group and fade others; drives EventFeed, TypeFilter, and oblast choropleth simultaneously
 - Multi-select: compare any combination of groups; empty selection resets all filters
