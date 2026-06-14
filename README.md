@@ -4,8 +4,6 @@ An interactive war-event map of Ukraine built with Vue 3, TypeScript, MapLibre G
 Data source: [VIINA dataset](https://github.com/zhukovsd/russia-ukraine-conflict-map) (daily CSV → static JSON).  
 Deployed on Vercel. Data refreshed weekly via GitHub Actions.
 
-![App demo — event feed click, fly-to, article drawer](docs/app-demo.gif)
-
 ![Occupation timelapse — Feb 2022 → Jun 2026](docs/occupation.gif)
 
 ---
@@ -29,6 +27,9 @@ Deployed on Vercel. Data refreshed weekly via GitHub Actions.
 - Oblast choropleth switches from cumulative totals to per-type counts when a group is active (pre-computed per-type breakdown in `oblast-choropleth.json`)
 
 ### Event feed
+
+![App demo — event feed click, fly-to, article drawer](docs/app-demo.gif)
+
 - Left panel, grouped by type, max 5 per group with expand/collapse
 - Tabs: All / Strikes / Forces / Other
 - OG descriptions fetched via `/api/og` Vercel proxy (CONCURRENCY=5, stale-fetch cancellation)
