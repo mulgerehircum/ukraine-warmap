@@ -17,6 +17,7 @@ import { initLandmarks, updateLandmarks, setLandmarksVisible } from '../../../sh
 import { setAnimating, updateSunLight } from '../../../shared/lib/map/threeLayer'
 import { updateArrowsDate, setArrowsVisible } from '../../../shared/lib/map/arrows'
 import { MILESTONES } from '../../../shared/data/milestones'
+import { prewarmTiles } from '../../../shared/lib/map/tilePrewarm'
 import { track } from '@vercel/analytics'
 import type { MapMode } from './CompassSelector.vue'
 import CompassSelector from './CompassSelector.vue'
@@ -111,6 +112,10 @@ async function storyArriveAt(idx: number) {
   await onDateChange(date)
   storyFlyTo(idx)
   videoHidden.value = false
+  // Pre-warm the NEXT milestone's tiles during this dwell so they're in browser
+  // cache before the fly animation starts (DWELL_MS = 6s gives ample time).
+  const next = MILESTONES[idx + 1]
+  if (next) prewarmTiles(next.camera.lng, next.camera.lat, next.camera.zoom ?? 8)
   if (!storyPaused.value) {
     storyDwellTimer = window.setTimeout(() => storyResume(idx), DWELL_MS)
   }
@@ -164,6 +169,10 @@ function storyStart() {
   // Start a few days before the first milestone so the initial scrub is visible.
   activeDate.value = new Date(milestoneToDate(0).getTime() - 5 * MS_PER_DAY)
   storyLastTs = 0
+  // Kick off tile pre-warming for the first two milestones immediately so tiles
+  // are in-flight before the camera arrives (~83ms away at 60 days/sec).
+  prewarmTiles(MILESTONES[0].camera.lng, MILESTONES[0].camera.lat, MILESTONES[0].camera.zoom ?? 8)
+  if (MILESTONES[1]) prewarmTiles(MILESTONES[1].camera.lng, MILESTONES[1].camera.lat, MILESTONES[1].camera.zoom ?? 8)
   storyRaf = requestAnimationFrame(storyTick)
 }
 

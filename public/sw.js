@@ -1,10 +1,11 @@
-const CACHE = 'maptiles-v1'
+const CACHE = 'maptiles-v2'
 
-// Cache everything from the MapTiler CDN — tiles, terrain, fonts, sprites.
-// Tiles are content-addressed (URL encodes zoom/x/y + API key), so they never
-// need revalidation. Cache-first gives instant loads on revisit.
+// Cache MapTiler (vector tiles, terrain, fonts) and EOX satellite tiles.
+// All tile URLs are content-addressed (zoom/x/y baked in), so they never
+// need revalidation. Cache-first gives instant loads on revisit and on replay
+// after tile pre-warming.
 function isTileRequest(url) {
-  return url.hostname === 'api.maptiler.com'
+  return url.hostname === 'api.maptiler.com' || url.hostname === 'tiles.maps.eox.at'
 }
 
 self.addEventListener('install', () => self.skipWaiting())

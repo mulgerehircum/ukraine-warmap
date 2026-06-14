@@ -15,7 +15,8 @@
     "build:choropleth-timeline": "node scripts/build-choropleth-timeline.mjs",
     "build:cities": "node scripts/build-cities.mjs",
     "build:type-timeline": "node scripts/build-type-timeline.mjs",
-    "download:landmarks": "node --env-file=.env scripts/download-landmarks.mjs"
+    "download:landmarks": "node --env-file=.env scripts/download-landmarks.mjs",
+    "record": "node scripts/record-demo.mjs"
   },
   "dependencies": {
     "@types/three": "^0.184.0",
@@ -32,6 +33,7 @@
     "globals": "^17.6.0",
     "gltf-pipeline": "^4.3.1",
     "jszip": "^3.10.1",
+    "playwright": "^1.60.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.0",
     "vite": "^6.3.3",
