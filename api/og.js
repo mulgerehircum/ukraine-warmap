@@ -1,3 +1,29 @@
+import { lookup } from 'dns/promises'
+
+function isPrivateIP(ip) {
+  const v4 = ip.replace(/^::ffff:/i, '')
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(v4)) {
+    const [a, b] = v4.split('.').map(Number)
+    return (
+      a === 0 || a === 10 || a === 127 ||
+      (a === 100 && b >= 64 && b <= 127) ||
+      (a === 169 && b === 254) ||
+      (a === 172 && b >= 16 && b <= 31) ||
+      (a === 192 && b === 168)
+    )
+  }
+  const lo = ip.toLowerCase()
+  return lo === '::1' || lo.startsWith('fc') || lo.startsWith('fd') || lo.startsWith('fe80')
+}
+
+async function validateUrl(raw) {
+  let parsed
+  try { parsed = new URL(raw) } catch { throw new Error('invalid URL') }
+  if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error('protocol not allowed')
+  const { address } = await lookup(parsed.hostname)
+  if (isPrivateIP(address)) throw new Error('private address blocked')
+}
+
 function isTelegramUrl(url) {
   try {
     const h = new URL(url).hostname
@@ -60,6 +86,11 @@ export default async function handler(req, res) {
   const url = req.query.url
   if (!url) {
     res.status(400).json({ error: 'missing url' })
+    return
+  }
+
+  try { await validateUrl(url) } catch (err) {
+    res.status(400).json({ error: String(err) })
     return
   }
 
