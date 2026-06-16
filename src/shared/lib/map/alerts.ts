@@ -3,35 +3,35 @@ import { setAlertState } from './oblasts'
 
 // Maps alerts.in.ua region position (0-indexed in the `states` string)
 // to MapLibre feature ID from ukraine-oblasts.geojson (generateId: true order).
-// Derived from HASC codes in the geojson matched against alerts.in.ua region ordering.
+// Order matches devs.alerts.in.ua official IoT endpoint documentation.
 const REGION_TO_FEATURE: readonly number[] = [
-  23, // 0  Vinnytsia         UA.VI
+   4, // 0  Crimea (AR)       UA.KR
   24, // 1  Volyn             UA.VO
-   5, // 2  Dnipropetrovsk    UA.DP
-   6, // 3  Donetsk           UA.DT
-  27, // 4  Zhytomyr          UA.ZT
-  25, // 5  Zakarpattia       UA.ZK
-  26, // 6  Zaporizhzhia      UA.ZP
-   7, // 7  Ivano-Frankivsk   UA.IF
-  11, // 8  Kyiv Oblast       UA.KV
-  13, // 9  Kirovohrad        UA.KH
-  15, // 10 Luhansk           UA.LH
-  14, // 11 Lviv              UA.LV
-  16, // 12 Mykolaiv          UA.MY
-  17, // 13 Odesa             UA.OD
-  18, // 14 Poltava           UA.PL
-  19, // 15 Rivne             UA.RV
-  21, // 16 Sumy              UA.SM
-  22, // 17 Ternopil          UA.TP
-   8, // 18 Kharkiv           UA.KK
-   9, // 19 Kherson           UA.KS
-  10, // 20 Khmelnytskyi      UA.KM
-   1, // 21 Cherkasy          UA.CK
-   3, // 22 Chernivtsi        UA.CV
-   2, // 23 Chernihiv         UA.CH
-  12, // 24 Kyiv City         UA.KC
-   4, // 25 Crimea            UA.KR
-  20, // 26 Sevastopol        UA.SC
+  23, // 2  Vinnytsia         UA.VI
+   5, // 3  Dnipropetrovsk    UA.DP
+   6, // 4  Donetsk           UA.DT
+  27, // 5  Zhytomyr          UA.ZT
+  25, // 6  Zakarpattia       UA.ZK
+  26, // 7  Zaporizhzhia      UA.ZP
+   7, // 8  Ivano-Frankivsk   UA.IF
+  12, // 9  Kyiv City         UA.KC
+  11, // 10 Kyiv Oblast       UA.KV
+  13, // 11 Kirovohrad        UA.KH
+  15, // 12 Luhansk           UA.LH
+  14, // 13 Lviv              UA.LV
+  16, // 14 Mykolaiv          UA.MY
+  17, // 15 Odesa             UA.OD
+  18, // 16 Poltava           UA.PL
+  19, // 17 Rivne             UA.RV
+  20, // 18 Sevastopol        UA.SC
+  21, // 19 Sumy              UA.SM
+  22, // 20 Ternopil          UA.TP
+   8, // 21 Kharkiv           UA.KK
+   9, // 22 Kherson           UA.KS
+  10, // 23 Khmelnytskyi      UA.KM
+   1, // 24 Cherkasy          UA.CK
+   3, // 25 Chernivtsi        UA.CV
+   2, // 26 Chernihiv         UA.CH
 ]
 
 const POLL_INTERVAL = 30_000

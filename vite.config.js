@@ -26,7 +26,7 @@ function extractMeta(html, property) {
 }
 
 // Same debug states as api/alerts.js — keeps local dev testable without a token.
-const DEBUG_STATES = 'NNAANNANNN' + 'ANAANNANAA' + 'NNNNNNN'
+const DEBUG_STATES = 'NNNAANNAN' + 'NNNANAANN' + 'NANAANNNN'
 
 const alertsPlugin = {
   name: 'alerts-mock',
