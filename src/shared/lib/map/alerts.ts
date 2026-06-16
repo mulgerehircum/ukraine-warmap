@@ -76,8 +76,8 @@ async function poll(): Promise<void> {
     lastAlerted = parseStates(states)
     setAlertState(lastAlerted)
     onCount?.(lastAlerted.size, lastAlerted)
-  } catch {
-    // network error or timeout — just retry on next interval
+  } catch (e) {
+    console.warn('[alerts] poll error:', e)
   }
   schedule(POLL_INTERVAL)
 }

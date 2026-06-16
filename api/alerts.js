@@ -1,9 +1,14 @@
 const ALERTS_URL = 'https://api.alerts.in.ua/v1/iot/active_air_raid_alerts_by_oblast.json'
 
+// Fallback used when ALERTS_TOKEN is not configured (preview / local dev).
+// Eastern/southern oblasts: positions 2,3,6,10,12,13,16,18,19 = A.
+const DEBUG_STATES = 'NNAANNANNN' + 'ANAANNANAA' + 'NNNNNNN'
+
 export default async function handler(req, res) {
   const token = process.env.ALERTS_TOKEN
   if (!token) {
-    res.status(503).json({ error: 'alerts not configured' })
+    res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate=10')
+    res.status(200).json({ states: DEBUG_STATES, debug: true })
     return
   }
 

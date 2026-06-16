@@ -25,6 +25,19 @@ function extractMeta(html, property) {
   return null
 }
 
+// Same debug states as api/alerts.js — keeps local dev testable without a token.
+const DEBUG_STATES = 'NNAANNANNN' + 'ANAANNANAA' + 'NNNNNNN'
+
+const alertsPlugin = {
+  name: 'alerts-mock',
+  configureServer(server) {
+    server.middlewares.use('/api/alerts', (_req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ states: DEBUG_STATES, debug: true }))
+    })
+  },
+}
+
 const ogPlugin = {
   name: 'og-proxy',
   configureServer(server) {
@@ -82,5 +95,5 @@ const ogPlugin = {
 }
 
 export default defineConfig({
-  plugins: [vue(), ogPlugin],
+  plugins: [vue(), alertsPlugin, ogPlugin],
 })
